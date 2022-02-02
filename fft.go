@@ -7,14 +7,11 @@ import (
 	"math/cmplx"
 )
 
-func multiply(P []complex128, Q []complex128) []complex128 {
+func multiply(P []float64, Q []float64) []float64 {
 
 	l := len(P) + len(Q)
-	var newP = make([]complex128, l)
-	var newQ = make([]complex128, l)
-
-	copy(newP, P)
-	copy(newQ, Q)
+	var newP = copyToComplex(P, l)
+	var newQ = copyToComplex(Q, l)
 
 	A := FFT(newP)
 	B := FFT(newQ)
@@ -25,11 +22,11 @@ func multiply(P []complex128, Q []complex128) []complex128 {
 	}
 
 	RInv := inverseFFT(R)
-	for i := 0; i < len(R); i++ {
-		RInv[i] = complex(math.Round(real(RInv[i]*100))/100,
-			math.Round(imag(RInv[i]*100)/100))
+	var Result = make([]float64, len(RInv))
+	for i := 0; i < len(RInv); i++ {
+		Result[i] = math.Round(real(RInv[i]*100)) / 100
 	}
-	return RInv
+	return Result
 }
 
 func FFT(P []complex128) []complex128 {
@@ -45,13 +42,13 @@ func FFT(P []complex128) []complex128 {
 		}
 
 		n = pow
-		var temp []complex128 = make([]complex128, n)
+		var temp = make([]complex128, n)
 		copy(temp, P)
 		P = temp
 	}
 
-	var O []complex128 = make([]complex128, n/2)
-	var E []complex128 = make([]complex128, n/2)
+	var O = make([]complex128, n/2)
+	var E = make([]complex128, n/2)
 
 	for i := 0; i < n/2; i++ {
 		E[i] = P[2*i]
@@ -109,4 +106,12 @@ func nextPowerOf2(n int) (int, error) {
 		n = 4
 	}
 	return n, nil
+}
+
+func copyToComplex(P []float64, length int) []complex128 {
+	var complexP = make([]complex128, length)
+	for i := 0; i < len(P); i++ {
+		complexP[i] = complex(P[i], 0)
+	}
+	return complexP
 }
