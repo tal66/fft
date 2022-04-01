@@ -88,10 +88,14 @@ func inverseFFT(P []complex128) []complex128 {
 	return R
 }
 
+// faster than taking the log (at least in c#, where i tested this). 
+// using bits is even faster, but this is clear
 func nextPowerOf2(n int) (int, error) {
 	switch {
-	case n > 128 || n < 0:
+	case n > 256 || n < 0:
 		return n, errors.New("argument error")
+	case n > 128 || n < 0:
+		n = 256
 	case n > 64:
 		n = 128
 	case n > 32:
