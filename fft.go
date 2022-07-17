@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"math/cmplx"
+	"os"
 )
 
 func multiply(P []float64, Q []float64) []float64 {
@@ -39,6 +40,7 @@ func FFT(P []complex128) []complex128 {
 		pow, err := nextPowerOf2(n)
 		if err != nil {
 			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		n = pow
@@ -88,13 +90,13 @@ func inverseFFT(P []complex128) []complex128 {
 	return R
 }
 
-// faster than taking the log (at least in c#, where i tested this). 
+// faster than taking the log (tested in c#).
 // using bits is even faster, but this is clear
 func nextPowerOf2(n int) (int, error) {
 	switch {
 	case n > 256 || n < 0:
-		return n, errors.New("argument error")
-	case n > 128 || n < 0:
+		return n, errors.New("argument error (n > 256 || n < 0)")
+	case n > 128:
 		n = 256
 	case n > 64:
 		n = 128
